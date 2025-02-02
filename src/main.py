@@ -38,7 +38,7 @@ async def root():
     return response
 
 
-handler = Mangum(app=app, enable_lifespan=False)
+handler = Mangum(app=app)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=80)
