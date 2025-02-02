@@ -33,9 +33,10 @@ jobs:
               run: |
                 pytest
 
-            - name: Zip Lambda source
-              run: zip -r9 src.zip .
-              working-directory: .venv/lib/python3.10/site-packages
+            - name: Create archive of dependencies
+              run: |
+                cd .venv/lib/python3.10/site-packages
+                zip -r9 ../../../../src.zip .
 
             - name: Add API files to ZIP archive
               run: |
