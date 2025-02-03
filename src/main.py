@@ -73,7 +73,8 @@ app.add_middleware(
 #     return response
 
 
-@app.post("/hello", dependencies=[Depends(verify_api_key)])
+# @app.post("/hello", dependencies=[Depends(verify_api_key)])
+@app.post("/hello")
 async def hello():
     return {"message": "Hello World"}
 
