@@ -7,7 +7,7 @@ import logging
 from service.example_service import service_dummy
 from schemas.example_data_request import ExampleRequestBody
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
-from lib.message.lia_telegram import LiaTelegram
+from message.lia_telegram import LiaTelegram
 from dotenv import load_dotenv, find_dotenv
 import os
 
