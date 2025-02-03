@@ -38,7 +38,7 @@ jobs:
               if: steps.cache-venv.outputs.cache-hit != 'true'
 
             - name: Run tests
-              run: . venv/bin/activate && pytest tests
+              run: source venv/bin/activate && pytest
 
             - name: Create Zipfile archive of Dependencies
               run: |
