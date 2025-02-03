@@ -7,6 +7,7 @@ import logging
 from service.example_service import service_dummy
 from schemas.example_data_request import ExampleRequestBody
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
+from lib.message.lia_telegram import LiaTelegram
 from dotenv import load_dotenv, find_dotenv
 import os
 
@@ -76,6 +77,9 @@ app.add_middleware(
 @app.post("/hello", dependencies=[Depends(verify_api_key)])
 # @app.post("/hello")
 async def hello():
+    msg = "teste LIA handler"
+    lia_telegram = LiaTelegram()
+    lia_telegram.send_simple_msg_chat(message=msg)
     return {"message": "Hello World"}
 
 
