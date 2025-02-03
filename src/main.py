@@ -39,7 +39,8 @@ async def hello():
 
 
 @app.post("/example")
-async def example(request: ExampleRequestBody, api_key: APIKey = Depends(get_api_key)):
+# async def example(request: ExampleRequestBody, api_key: APIKey = Depends(get_api_key)):
+async def example(request: ExampleRequestBody):
     response = await service_dummy(request=request)
 
     if not response:
