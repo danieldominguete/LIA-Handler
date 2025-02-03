@@ -1,22 +1,22 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security.api_key import APIKey
+from security.security import get_api_key
 from mangum import Mangum
 import uvicorn
 import logging
+from service.example_service import service_dummy
+from schemas.example_data_request import ExampleRequestBody
+from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 
 # ----------------------------------------------------------
-# app logging configuration - only terminal
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+# terminal logging
 
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-
-logger.addHandler(console_handler)
-formatter = logging.Formatter(
-    "%(asctime)s: %(levelname)s - %(message)s", datefmt="%y-%m-%d %H:%M"
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s: %(levelname)s - %(message)s",
+    datefmt="%y-%m-%d %H:%M",
 )
-console_handler.setFormatter(formatter)
 # ----------------------------------------------------------
 # Start application
 
@@ -32,9 +32,25 @@ app.add_middleware(
 
 
 @app.get("/")
-async def root():
+async def hello():
     response = {"message": "Hello World"}
     logging.info(f"/ response: {response}")
+    return response
+
+
+@app.post("/example")
+async def example(request: ExampleRequestBody, api_key: APIKey = Depends(get_api_key)):
+    response = await service_dummy(request=request)
+
+    if not response:
+        logging.error(f"Request: {request}")
+        raise HTTPException(
+            status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail="Ops... internal error!"
+        )
+
+    logging.info(f"Request: {request}")
+    logging.info(f"Response: {response}")
+
     return response
 
 
