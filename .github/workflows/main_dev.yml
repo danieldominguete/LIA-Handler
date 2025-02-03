@@ -72,7 +72,7 @@ jobs:
         - name: Download Lambda api_dev.zip artifact
           uses: actions/download-artifact@v4
           with:
-            name: api
+            name: api_dev
         - name: Upload to S3
           run: aws s3 cp api_dev.zip s3://lia-handler/api_dev.zip
           env:
