@@ -38,7 +38,7 @@ jobs:
               if: steps.cache-venv.outputs.cache-hit != 'true'
 
             - name: Run tests
-              run: . venv/bin/activate && PYTHONPATH=$PYTHONPATH:$(pwd) pytest tests
+              run: . venv/bin/activate && pytest tests
 
             - name: Create Zipfile archive of Dependencies
               run: |
