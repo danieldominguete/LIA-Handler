@@ -1,44 +1,26 @@
-from fastapi import FastAPI, HTTPException, Depends
-from fastapi.security import APIKeyHeader
+"""Script Main de Chamada da API"""
+
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 import uvicorn
 import logging
-from service.example_service import service_dummy
-from schemas.example_data_request import ExampleRequestBody
+
+# from service.example_service import service_dummy
+# from schemas.example_data_request import ExampleRequestBody
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 from message.lia_telegram import LiaTelegram
-from dotenv import load_dotenv, find_dotenv
-import os
+from security.security import verify_api_key
+
 
 # ----------------------------------------------------------
 # terminal logging
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s: %(levelname)s - %(message)s",
-    datefmt="%y-%m-%d %H:%M",
-)
+# todo: configurar o logging
+
 # ----------------------------------------------------------
 # Start application
-
-load_dotenv(find_dotenv())
-
-API_KEY_NAME = "X-API-Key"
-API_KEY = os.getenv("API_KEY")
-
 app = FastAPI(title="LIA Handler")
-
-
-# Função para verificar o token de API
-api_key_header = APIKeyHeader(name=API_KEY_NAME)
-
-
-async def verify_api_key(api_key_header: str = Depends(api_key_header)):
-    if api_key_header == API_KEY:
-        return api_key_header
-    else:
-        raise HTTPException(status_code=401, detail="Token de API inválido")
 
 
 app.add_middleware(
@@ -49,6 +31,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# General objects
+lia_telegram = LiaTelegram()
 
 # @app.get("/")
 # async def hello():
@@ -75,12 +59,18 @@ app.add_middleware(
 
 
 @app.post("/hello", dependencies=[Depends(verify_api_key)])
-# @app.post("/hello")
 async def hello():
-    msg = "teste LIA handler"
-    lia_telegram = LiaTelegram()
-    lia_telegram.send_simple_msg_chat(message=msg)
-    return {"message": "Hello World"}
+    try:
+        msg = "LIA API is running!"
+        lia_telegram.send_simple_msg_chat(message=msg)
+        return {"message": msg}
+    except Exception as e:
+        error_msg = f"An error occurred: {e}"
+        logging.error(error_msg)
+        raise HTTPException(
+            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ops... internal error! " + error_msg,
+        )
 
 
 handler = Mangum(app=app)
