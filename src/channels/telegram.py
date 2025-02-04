@@ -1,3 +1,7 @@
+"""
+Telegram Interface
+"""
+
 from dotenv import load_dotenv, find_dotenv
 import logging, os
 import requests
