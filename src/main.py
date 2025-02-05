@@ -59,9 +59,10 @@ async def hello():
 
 # Chamada o serviço de mensagem biblica
 @app.post("/bible", dependencies=[Depends(verify_api_key)])
-async def bible(request: EmptyRequestBody):
+async def bible():
     try:
-        response = await bible_message_service(request=request)
+        request = None
+        response = await bible_message_service(request=None)
 
         if response is None:
             logging.error(f"Request: {request}")
