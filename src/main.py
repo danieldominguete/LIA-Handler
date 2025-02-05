@@ -11,7 +11,12 @@ from services.bible_service import bible_message_service
 from channels.telegram import LiaTelegram
 from channels.alexa import LiaAlexa
 from security.security import verify_api_key
+from dotenv import load_dotenv, find_dotenv
+import os
 
+# Environment variables
+load_dotenv(find_dotenv())
+ENV = os.getenv("ENV")
 
 # ----------------------------------------------------------
 # terminal logging

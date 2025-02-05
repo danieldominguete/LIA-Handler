@@ -11,7 +11,7 @@ from dotenv import load_dotenv, find_dotenv
 
 # Environment variables
 load_dotenv(find_dotenv())
-ENV = os.environ.get("ENV")
+ENV = os.getenv("ENV")
 
 
 class LiaAlexa:

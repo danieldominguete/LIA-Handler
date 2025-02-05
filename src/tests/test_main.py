@@ -9,6 +9,7 @@ from main import app
 load_dotenv(find_dotenv())
 API_KEY_NAME = "X-API-Key"
 API_KEY = os.getenv("API_KEY")
+ENV = os.getenv("ENV")
 
 client = TestClient(app)
 
