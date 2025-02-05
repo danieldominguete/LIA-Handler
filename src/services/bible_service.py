@@ -4,9 +4,14 @@ Get a random message from bible file
 
 import logging
 import random
-import datetime
+import datetime, os
 import uuid
 from dao.file import load_data_from_json
+from dotenv import load_dotenv, find_dotenv
+
+# Environment variables
+load_dotenv(find_dotenv())
+ENV = os.environ.get("ENV")
 
 
 async def bible_message_service(request):
@@ -21,8 +26,12 @@ async def bible_message_service(request):
         "Consultando uma mensagem aleatória no arquivo de mensagens biblicas..."
     )
 
-    bible_data = load_data_from_json("src/static/biblia.json", encoding="utf-8-sig")
-    service_config = load_data_from_json("src/config/lia_bible.json")
+    if ENV == "local":
+        bible_data = load_data_from_json("src/static/biblia.json", encoding="utf-8-sig")
+        service_config = load_data_from_json("src/config/lia_bible.json")
+    else:
+        bible_data = load_data_from_json("static/biblia.json", encoding="utf-8-sig")
+        service_config = load_data_from_json("config/lia_bible.json")
 
     date_ref_dt = datetime.datetime.now()
     date_ref = date_ref_dt.strftime("%Y-%m-%d %H:%M:%S")

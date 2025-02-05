@@ -6,12 +6,21 @@ import logging
 from dateutil.parser import parse
 from dao.file import load_data_from_json, save_list_to_json
 from dao.aws_s3 import upload_to_aws_S3
-import uuid, datetime
+import uuid, datetime, os
+from dotenv import load_dotenv, find_dotenv
+
+# Environment variables
+load_dotenv(find_dotenv())
+ENV = os.environ.get("ENV")
 
 
 class LiaAlexa:
     def __init__(self):
-        self.config = load_data_from_json("src/config/lia_alexa_feeds.json")
+
+        if ENV == "local":
+            self.config = load_data_from_json("src/config/lia_alexa_feeds_dev.json")
+        else:
+            self.config = load_data_from_json("config/lia_alexa_feeds.json")
 
     def register_flash_briefing_feed(self, message: str = "", title: str = ""):
 

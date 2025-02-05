@@ -83,23 +83,6 @@ async def bible(request: EmptyRequestBody):
         )
 
 
-# @app.post("/example")
-# # async def example(request: ExampleRequestBody, api_key: APIKey = Depends(get_api_key)):
-# async def example(request: ExampleRequestBody):
-#     response = await service_dummy(request=request)
-
-#     if not response:
-#         logging.error(f"Request: {request}")
-#         raise HTTPException(
-#             status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail="Ops... internal error!"
-#         )
-
-#     logging.info(f"Request: {request}")
-#     logging.info(f"Response: {response}")
-
-#     return response
-
-
 handler = Mangum(app=app)
 
 if __name__ == "__main__":
