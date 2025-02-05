@@ -42,3 +42,24 @@ def save_list_to_json(list_data, filename):
             status_code=HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Ops... internal error! " + error_msg,
         )
+
+
+def save_dict_to_json(dict_data, filename):
+    try:
+        # Check if the file exists, if not create it
+        if not os.path.exists(filename):
+            create_folder = os.path.dirname(filename)
+            if not os.path.exists(create_folder):
+                os.makedirs(create_folder)
+
+        # Save the list data to the JSON file
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(dict_data, f, ensure_ascii=False, indent=4)
+            return True
+    except Exception as e:
+        error_msg = f"An error occurred: {e}"
+        logging.error(error_msg)
+        raise HTTPException(
+            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ops... internal error! " + error_msg,
+        )

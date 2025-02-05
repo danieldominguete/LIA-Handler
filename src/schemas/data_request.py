@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class EmptyRequestBody(BaseModel):
-    pass
+    source: str
 
 
 class ExampleRequestBody(BaseModel):
