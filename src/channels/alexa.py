@@ -18,7 +18,7 @@ class LiaAlexa:
     def __init__(self):
 
         if ENV == "local":
-            self.config = load_data_from_json("src/config/lia_alexa_feeds_dev.json")
+            self.config = load_data_from_json("src/config/lia_alexa_feeds.json")
         else:
             self.config = load_data_from_json("config/lia_alexa_feeds.json")
 
