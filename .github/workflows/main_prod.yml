@@ -38,7 +38,13 @@ jobs:
               if: steps.cache-venv.outputs.cache-hit != 'true'
 
             - name: Run tests
-              run: . venv/bin/activate && pytest
+              env: 
+                API_KEY: ${{ secrets.API_KEY }}
+                ENV: ${{ secrets.ENV }}
+              run: |
+                export PYTHONPATH=$PYTHONPATH:$(pwd)
+                source venv/bin/activate 
+                pytest
 
             - name: Create Zipfile archive of Dependencies
               run: |
