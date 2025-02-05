@@ -24,7 +24,7 @@ jobs:
                 pip install virtualenv
 
             - name:  Setup Virtual env
-              uses: actions/cache@v2
+              uses: actions/cache@v4
               id: cache-venv
               with:
                 path: venv
@@ -34,11 +34,17 @@ jobs:
 
             - name: Activate and Install Depencies into Virtual env
               run: python -m venv venv && source venv/bin/activate && 
-                pip3 install -r requirements.txt
+                pip install -r requirements.txt
               if: steps.cache-venv.outputs.cache-hit != 'true'
 
             - name: Run tests
-              run: . venv/bin/activate && pytest
+              env: 
+                API_KEY: ${{ secrets.API_KEY }}
+                ENV: ${{ secrets.ENV }}
+              run: |
+                export PYTHONPATH=$PYTHONPATH:$(pwd)
+                source venv/bin/activate 
+                pytest
 
             - name: Create Zipfile archive of Dependencies
               run: |

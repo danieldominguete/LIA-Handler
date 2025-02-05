@@ -1,0 +1,5 @@
+{
+  "alexa_feeds_file_path": "tmp/",
+  "alexa_feeds_filename": "lia_feeds_to_alexa.json",
+  "alexa_feeds_aws_bucket": "lia-files-public"
+}

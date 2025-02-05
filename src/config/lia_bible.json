@@ -1,0 +1,7 @@
+{
+    "books": [
+        {"cod": "sl", "n_chapters": 150, "to_read": "versiculo", "id": 18},
+        {"cod": "pv", "n_chapters": 31, "to_read": "versiculo", "id": 19},
+        {"cod": "ec", "n_chapters": 12, "to_read": "versiculo", "id": 20}
+    ]
+}
