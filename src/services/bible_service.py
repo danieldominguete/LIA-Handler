@@ -34,7 +34,7 @@ async def bible_message_service(request):
         service_config = load_data_from_json("config/lia_bible.json")
 
     date_ref_dt = datetime.datetime.now()
-    date_ref = date_ref_dt.strftime("%Y-%m-%d %H:%M:%S")
+    date_ref = date_ref_dt.strftime("%Y-%m-%d-%H-%M-%S")
 
     # selecionando o livro
     list_of_books = list(service_config.get("books"))
@@ -79,9 +79,10 @@ async def bible_message_service(request):
     logging.info("Consultando arquivo de mensagens biblicas... concluido!")
 
     response = {
-        "execution_id": id,
+        "id": id,
         "datetime": date_ref,
-        "message": intro_message + message,
+        "service": "bible",
+        "result": {"message": intro_message + message},
     }
 
     return response

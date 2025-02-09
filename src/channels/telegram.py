@@ -35,6 +35,8 @@ class LiaTelegram:
             )
             response = requests.request("GET", url=url)
 
+            logging.info("Message sent to Telegram.")
+
             return response.json()
 
         # Display an error message if something goes wrong.

@@ -55,7 +55,9 @@ class LiaAlexa:
             uploaded = upload_to_aws_S3(
                 local_file=full_path, bucket=bucket_name, s3_file=bucket_full_path
             )
-            logging.info("Arquivo de feeds no formato Alexa:" + str(uploaded))
+
+            logging.info("Alexa feeds file updated:" + str(uploaded))
+
             return uploaded
 
         # Display an error message if something goes wrong.

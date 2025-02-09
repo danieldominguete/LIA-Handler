@@ -10,22 +10,22 @@ async def service_dummy(request):
     id = str(uuid.uuid1().hex)
 
     # datetime local
-    now = datetime.datetime.now(timezone("America/Sao_Paulo")).isoformat()
+    now = datetime.datetime.now(timezone("America/Sao_Paulo"))
+    now = now.strftime("%Y-%m-%d-%H-%M-%S")
 
     try:
         a = request.number1
         b = request.number2
 
-        if request.operator == "soma":
-            soma = a + b
+        soma = a + b
 
-        msg = "Operation " + str(request.operator) + " done!"
+        msg = "Operation done with success! Result: " + str(soma)
 
         response = {
             "id": id,
             "datetime": now,
-            "soma": soma,
-            "msg": msg
+            "service": "dummy",
+            "result": {"message": msg},
         }
 
         return response
