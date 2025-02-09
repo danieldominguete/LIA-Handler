@@ -98,45 +98,66 @@ class LIALogs:
 
         if ENV == "local":
 
-            # configurando o logger
-            log_config = {
-                "level": logging.INFO,
-                "format": "%(asctime)s - %(levelname)s - %(message)s",
-                "datefmt": "%d-%m-%Y %H:%M:%S",
-                "handlers": [
-                    logging.FileHandler(self.log_file),
-                    logging.StreamHandler(),
-                ],
-            }
+            logger = logging.getLogger(self.script_name)
+            logger.setLevel(logging.INFO)
 
-            logging.basicConfig(**log_config)
+            # Create file handler which logs even debug messages
+            fh = logging.FileHandler(self.log_file)
+            fh.setLevel(logging.INFO)
 
-            logging.info("Configurando log local")
+            # Create console handler with a higher log level
+            ch = logging.StreamHandler()
+            ch.setLevel(logging.INFO)
 
-            return logging.basicConfig(**log_config)
+            # Create formatter and add it to the handlers
+            formatter = logging.Formatter(
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            )
+            fh.setFormatter(formatter)
+            ch.setFormatter(formatter)
+
+            # Add the handlers to the logger
+            logger.addHandler(fh)
+            logger.addHandler(ch)
+
+            logger.info("Setting up logger for local environment")
+
+            return logger
 
         else:
-            # configurando o logger
+            logger = logging.getLogger(self.script_name)
+            logger.setLevel(logging.INFO)
 
-            log_config = {
-                "level": logging.INFO,
-                "format": "%(asctime)s - %(levelname)s - %(message)s",
-                "datefmt": "%d-%m-%Y %H:%M:%S",
-                "handlers": [
-                    logging.FileHandler(self.log_file),
-                    logging.StreamHandler(),
-                ],
-            }
+            # Create file handler which logs even debug messages
+            fh = logging.FileHandler(self.log_file)
+            fh.setLevel(logging.INFO)
 
-            logging.basicConfig(**log_config)
+            # Create console handler with a higher log level
+            ch = logging.StreamHandler()
+            ch.setLevel(logging.INFO)
 
-            # Configure CloudWatch logging
+            # Create CloudWatch handler
             cloudwatch_handler = watchtower.CloudWatchLogHandler(
                 log_group="LIA-Handler-Logs"
             )
-            logging.getLogger().addHandler(cloudwatch_handler)
+            cloudwatch_handler.setLevel(logging.INFO)
 
-            return logging.basicConfig(**log_config)
+            # Create formatter and add it to the handlers
+            formatter = logging.Formatter(
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            )
+            fh.setFormatter(formatter)
+            ch.setFormatter(formatter)
+            cloudwatch_handler.setFormatter(formatter)
+
+            # Add the handlers to the logger
+            logger.addHandler(fh)
+            logger.addHandler(ch)
+            logger.addHandler(cloudwatch_handler)
+
+            logger.info("Setting up logger for local environment")
+
+            return logger
 
     def info(self, message: str) -> None:
         """
