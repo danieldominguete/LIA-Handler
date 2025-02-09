@@ -5,13 +5,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 from mangum import Mangum
 import uvicorn
-import logging
-from schemas.data_request import EmptyRequestBody
+from log.terminal_logging import LIALogs
+from log.payload_logging import save_response_to_s3
+from schemas.data_request import ExampleRequestBody
 from services.bible_service import bible_message_service
+from services.example_service import service_dummy
 from channels.telegram import LiaTelegram
 from channels.alexa import LiaAlexa
 from security.security import verify_api_key
 from dotenv import load_dotenv, find_dotenv
+
 import os
 
 # Environment variables
@@ -21,12 +24,15 @@ ENV = os.getenv("ENV")
 # ----------------------------------------------------------
 # terminal logging
 
-# todo: configurar o logging
+# Criando estrutura de logs
+script_name = os.path.basename(__file__)
+log = LIALogs(script_name=script_name)
+log.init_run()
+
 
 # ----------------------------------------------------------
 # Start application
 app = FastAPI(title="LIA Handler")
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -37,8 +43,11 @@ app.add_middleware(
 )
 
 # General objects
+log.info("Creating general objects...")
 lia_telegram = LiaTelegram()
 lia_alexa = LiaAlexa()
+
+log.info("Start services...")
 
 
 # Chamada o serviço de teste de serviço
@@ -50,10 +59,56 @@ async def hello():
         return {"message": msg}
     except Exception as e:
         error_msg = f"An error occurred: {e}"
-        logging.error(error_msg)
+        log.error(error_msg)
         raise HTTPException(
             status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Ops... internal error! " + error_msg,
+            detail={
+                "error": "Ops... internal error!",
+                "exception": str(e),
+                "content": str(""),
+            },
+        )
+
+
+# Chamada o serviço com request
+@app.post("/response", dependencies=[Depends(verify_api_key)])
+async def response(request: ExampleRequestBody):
+    try:
+        response = await service_dummy(request=request)
+
+        if response is None:
+            log.error(f"Request: {request}")
+            raise HTTPException(
+                status_code=HTTP_500_INTERNAL_SERVER_ERROR,
+                detail={
+                    "error": "Ops... internal error!",
+                    "exception": str("Service response is null"),
+                    "content": str(request),
+                },
+            )
+        else:
+
+            # save log
+            save_response_to_s3(response=response)
+
+            # telegram message
+            msg = response.get("result").get("message")
+            lia_telegram.send_simple_msg_chat(message=msg)
+
+            # alexa message
+            lia_alexa.register_flash_briefing_feed(message=msg, title="LIA Bible")
+
+            return response
+    except Exception as e:
+        error_msg = f"An error occurred: {e}"
+        log.error(error_msg)
+        raise HTTPException(
+            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "error": "Ops... internal error!",
+                "exception": str(e),
+                "content": str(request),
+            },
         )
 
 
@@ -65,15 +120,22 @@ async def bible():
         response = await bible_message_service(request=None)
 
         if response is None:
-            logging.error(f"Request: {request}")
+            log.error(f"Request: {request}")
             raise HTTPException(
                 status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Ops... internal error!",
+                detail={
+                    "error": "Ops... internal error!",
+                    "exception": str("Service response is null"),
+                    "content": str(request),
+                },
             )
         else:
 
+            # save log
+            save_response_to_s3(response=response)
+
             # telegram message
-            msg = response.get("message")
+            msg = response.get("result").get("message")
             lia_telegram.send_simple_msg_chat(message=msg)
 
             # alexa message
@@ -82,10 +144,14 @@ async def bible():
             return response
     except Exception as e:
         error_msg = f"An error occurred: {e}"
-        logging.error(error_msg)
+        log.error(error_msg)
         raise HTTPException(
             status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Ops... internal error! " + error_msg,
+            detail={
+                "error": "Ops... internal error!",
+                "exception": str(e),
+                "content": str(request),
+            },
         )
 
 

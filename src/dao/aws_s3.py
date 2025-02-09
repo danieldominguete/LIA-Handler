@@ -23,7 +23,7 @@ def upload_to_aws_S3(local_file, bucket, s3_file):
 
     try:
         s3.upload_file(local_file, bucket, s3_file)
-        logging.info("Upload Successful")
+        logging.info("Upload " + str(local_file) + " to S3 successfully!")
         return True
     except FileNotFoundError:
         logging.error("The file was not found")

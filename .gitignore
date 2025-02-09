@@ -1,6 +1,7 @@
 # General files
 .DS_Store
 tmp/
+runs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
