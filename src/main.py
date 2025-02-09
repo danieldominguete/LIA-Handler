@@ -82,7 +82,7 @@ async def response(request: ExampleRequestBody):
                 status_code=HTTP_500_INTERNAL_SERVER_ERROR,
                 detail={
                     "error": "Ops... internal error!",
-                    "exception": str(e),
+                    "exception": str("Service response is null"),
                     "content": str(request),
                 },
             )
@@ -125,7 +125,7 @@ async def bible():
                 status_code=HTTP_500_INTERNAL_SERVER_ERROR,
                 detail={
                     "error": "Ops... internal error!",
-                    "exception": str(e),
+                    "exception": str("Service response is null"),
                     "content": str(request),
                 },
             )
