@@ -55,7 +55,7 @@ class LIALogs:
         self.log_run = Path(str(script_name)).stem + "_" + self.dt_init_str
 
         # configurando locais de registros de logs
-        self.log_path = "runs/" + str(self.log_run) + "/"
+        self.log_path = "temp/run/" + str(self.log_run) + "/"
 
         # configurando o path completo de log
         self.log_file = self.log_path + self.log_name
