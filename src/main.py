@@ -61,7 +61,11 @@ async def hello():
         log.error(error_msg)
         raise HTTPException(
             status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Ops... internal error! " + error_msg,
+            detail={
+                "error": "Ops... internal error!",
+                "exception": str(e),
+                "content": str(request),
+            },
         )
 
 
@@ -75,7 +79,11 @@ async def response(request: ExampleRequestBody):
             log.error(f"Request: {request}")
             raise HTTPException(
                 status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Ops... internal error!",
+                detail={
+                    "error": "Ops... internal error!",
+                    "exception": str(e),
+                    "content": str(request),
+                },
             )
         else:
 
@@ -95,7 +103,11 @@ async def response(request: ExampleRequestBody):
         log.error(error_msg)
         raise HTTPException(
             status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Ops... internal error! " + error_msg,
+            detail={
+                "error": "Ops... internal error!",
+                "exception": str(e),
+                "content": str(request),
+            },
         )
 
 
@@ -110,7 +122,11 @@ async def bible():
             log.error(f"Request: {request}")
             raise HTTPException(
                 status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Ops... internal error!",
+                detail={
+                    "error": "Ops... internal error!",
+                    "exception": str(e),
+                    "content": str(request),
+                },
             )
         else:
 
@@ -130,7 +146,11 @@ async def bible():
         log.error(error_msg)
         raise HTTPException(
             status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Ops... internal error! " + error_msg,
+            detail={
+                "error": "Ops... internal error!",
+                "exception": str(e),
+                "content": str(request),
+            },
         )
 
 
