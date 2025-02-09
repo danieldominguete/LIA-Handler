@@ -24,9 +24,9 @@ def save_list_to_json(list_data, filename):
     try:
         # Check if the file exists, if not create it
         if not os.path.exists(filename):
-            create_folder = os.path.dirname(filename)
-            if not os.path.exists(create_folder):
-                os.makedirs(create_folder)
+            new_folder = os.path.dirname(filename)
+            if not os.path.exists(new_folder):
+                os.makedirs(new_folder, exist_ok=True)
 
             with open(filename, "w", encoding="utf-8") as f:
                 json.dump([], f, ensure_ascii=False, indent=4)
@@ -48,9 +48,9 @@ def save_dict_to_json(dict_data, filename):
     try:
         # Check if the file exists, if not create it
         if not os.path.exists(filename):
-            create_folder = os.path.dirname(filename)
-            if not os.path.exists(create_folder):
-                os.makedirs(create_folder)
+            new_folder = os.path.dirname(filename)
+            if not os.path.exists(new_folder):
+                os.makedirs(new_folder, exist_ok=True)
 
         # Save the list data to the JSON file
         with open(filename, "w", encoding="utf-8") as f:
@@ -85,9 +85,5 @@ def create_folder(folder_path: str) -> bool:
           it will simply return None.
     """
     if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
-        return True
-
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
+        os.makedirs(folder_path, exist_ok=True)
         return True
