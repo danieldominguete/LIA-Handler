@@ -1,14 +1,19 @@
 """Payload logging module"""
 
-import logging
+import logging, os
 from fastapi import HTTPException
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 from schemas.data_request import ExampleResponseBody
 from dao.file import save_dict_to_json
 from dao.aws_s3 import upload_to_aws_S3
+from dotenv import load_dotenv, find_dotenv
 
-PATH_LOCALHOST = "tmp"
-PATH_S3 = "log"
+# Environment variables
+load_dotenv(find_dotenv())
+ENV = os.getenv("ENV")
+
+PATH_LOCALHOST = "tmp/log" + "/" + ENV
+PATH_S3 = "log" + "/" + ENV
 BUCKET = "lia-handler"
 
 
