@@ -111,13 +111,12 @@ class LIALogs:
 
             logging.basicConfig(**log_config)
 
+            logging.info("Configurando log local")
+
             return logging.basicConfig(**log_config)
 
         else:
             # configurando o logger
-            cloudwatch_handler = watchtower.CloudWatchLogHandler(
-                log_group="LIA-Handler-Logs"
-            )
 
             log_config = {
                 "level": logging.INFO,
@@ -126,11 +125,16 @@ class LIALogs:
                 "handlers": [
                     logging.FileHandler(self.log_file),
                     logging.StreamHandler(),
-                    cloudwatch_handler,
                 ],
             }
 
             logging.basicConfig(**log_config)
+
+            # Configure CloudWatch logging
+            cloudwatch_handler = watchtower.CloudWatchLogHandler(
+                log_group="LIA-Handler-Logs"
+            )
+            logging.getLogger().addHandler(cloudwatch_handler)
 
             return logging.basicConfig(**log_config)
 
