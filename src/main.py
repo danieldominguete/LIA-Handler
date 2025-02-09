@@ -29,6 +29,7 @@ script_name = os.path.basename(__file__)
 log = LIALogs(script_name=script_name)
 log.init_run()
 
+
 # ----------------------------------------------------------
 # Start application
 app = FastAPI(title="LIA Handler")
@@ -64,7 +65,7 @@ async def hello():
             detail={
                 "error": "Ops... internal error!",
                 "exception": str(e),
-                "content": str(request),
+                "content": str(""),
             },
         )
 

@@ -9,6 +9,13 @@ import time
 from pathlib import Path
 from dao.file import create_folder
 import os
+import logging
+import watchtower
+from dotenv import load_dotenv, find_dotenv
+
+# Environment variables
+load_dotenv(find_dotenv())
+ENV = os.getenv("ENV")
 
 
 class LIALogs:
@@ -89,17 +96,43 @@ class LIALogs:
             The log file path should be set in self.log_file before calling this method.
         """
 
-        # configurando o logger
-        log_config = {
-            "level": logging.INFO,
-            "format": "%(asctime)s - %(levelname)s - %(message)s",
-            "datefmt": "%d-%m-%Y %H:%M:%S",
-            "handlers": [logging.FileHandler(self.log_file), logging.StreamHandler()],
-        }
+        if ENV == "local":
 
-        logging.basicConfig(**log_config)
+            # configurando o logger
+            log_config = {
+                "level": logging.INFO,
+                "format": "%(asctime)s - %(levelname)s - %(message)s",
+                "datefmt": "%d-%m-%Y %H:%M:%S",
+                "handlers": [
+                    logging.FileHandler(self.log_file),
+                    logging.StreamHandler(),
+                ],
+            }
 
-        return logging.basicConfig(**log_config)
+            logging.basicConfig(**log_config)
+
+            return logging.basicConfig(**log_config)
+
+        else:
+            # configurando o logger
+            cloudwatch_handler = watchtower.CloudWatchLogHandler(
+                log_group="LIA-Handler-Logs"
+            )
+
+            log_config = {
+                "level": logging.INFO,
+                "format": "%(asctime)s - %(levelname)s - %(message)s",
+                "datefmt": "%d-%m-%Y %H:%M:%S",
+                "handlers": [
+                    logging.FileHandler(self.log_file),
+                    logging.StreamHandler(),
+                    cloudwatch_handler,
+                ],
+            }
+
+            logging.basicConfig(**log_config)
+
+            return logging.basicConfig(**log_config)
 
     def info(self, message: str) -> None:
         """
