@@ -12,7 +12,7 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 ENV = os.getenv("ENV")
 
-PATH_LOCALHOST = "tmp/log" + "/" + ENV
+PATH_LOCALHOST = "/tmp/log" + "/" + ENV
 PATH_S3 = "log" + "/" + ENV
 BUCKET = "lia-handler"
 
