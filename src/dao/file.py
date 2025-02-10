@@ -87,3 +87,6 @@ def create_folder(folder_path: str) -> bool:
     if not os.path.exists(folder_path):
         os.makedirs(folder_path, exist_ok=True)
         return True
+    else:
+        logging.info(f"Folder already exists: {folder_path}")
+        return True
