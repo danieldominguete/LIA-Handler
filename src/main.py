@@ -5,13 +5,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 from mangum import Mangum
 import uvicorn
-from log.terminal_logging import LIALogs
+import logging
+import watchtower
 from log.payload_logging import save_response_to_s3
 from schemas.data_request import ExampleRequestBody
 from services.bible_service import bible_message_service
 from services.example_service import service_dummy
+from services.alexa_service import alexa_service
 from channels.telegram import LiaTelegram
-from channels.alexa import LiaAlexa
+
 from security.security import verify_api_key
 from dotenv import load_dotenv, find_dotenv
 
@@ -22,12 +24,56 @@ load_dotenv(find_dotenv())
 ENV = os.getenv("ENV")
 
 # ----------------------------------------------------------
-# terminal logging
 
 # Criando estrutura de logs
 script_name = os.path.basename(__file__)
-log = LIALogs(script_name=script_name)
-log.init_run()
+
+if ENV == "local":
+
+    logger = logging.getLogger(script_name)
+    logger.setLevel(logging.INFO)
+
+    # Create console handler with a higher log level
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+
+    # Create formatter and add it to the handlers
+    formatter = logging.Formatter(
+        "%(asctime)s: %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+    )
+    ch.setFormatter(formatter)
+
+    # Add the handlers to the logger
+    logger.addHandler(ch)
+
+    logger.info("Setting up logger for local environment")
+
+else:
+    logger = logging.getLogger(script_name)
+    logger.setLevel(logging.INFO)
+
+    # Create console handler with a higher log level
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+
+    # Create CloudWatch handler
+    cloudwatch_handler = watchtower.CloudWatchLogHandler(log_group="LIA-Handler-Logs")
+    cloudwatch_handler.setLevel(logging.INFO)
+
+    # Create formatter and add it to the handlers
+    formatter = logging.Formatter(
+        "%(asctime)s: %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+    )
+
+    ch.setFormatter(formatter)
+    cloudwatch_handler.setFormatter(formatter)
+
+    # Add the handlers to the logger
+
+    logger.addHandler(ch)
+    logger.addHandler(cloudwatch_handler)
+
+    logger.info("Setting up logger for local environment")
 
 
 # ----------------------------------------------------------
@@ -43,23 +89,24 @@ app.add_middleware(
 )
 
 # General objects
-log.info("Creating general objects...")
+logger.info("Creating general objects...")
 lia_telegram = LiaTelegram()
-lia_alexa = LiaAlexa()
 
-log.info("Start services...")
+
+logger.info("Start services...")
 
 
 # Chamada o serviço de teste de serviço
 @app.post("/hello", dependencies=[Depends(verify_api_key)])
 async def hello():
+    logger.info("Starting hello service ...")
     try:
         msg = "LIA API is running!"
         lia_telegram.send_simple_msg_chat(message=msg)
         return {"message": msg}
     except Exception as e:
         error_msg = f"An error occurred: {e}"
-        log.error(error_msg)
+        logger.error(error_msg)
         raise HTTPException(
             status_code=HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
@@ -70,38 +117,27 @@ async def hello():
         )
 
 
-# Chamada o serviço com request
+# Exemplo de serviço com request
 @app.post("/response", dependencies=[Depends(verify_api_key)])
 async def response(request: ExampleRequestBody):
+    logger.info("Starting response service ...")
     try:
+
+        # call the service
         response = await service_dummy(request=request)
 
-        if response is None:
-            log.error(f"Request: {request}")
-            raise HTTPException(
-                status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-                detail={
-                    "error": "Ops... internal error!",
-                    "exception": str("Service response is null"),
-                    "content": str(request),
-                },
-            )
-        else:
+        # save result log
+        save_response_to_s3(response=response)
 
-            # save log
-            save_response_to_s3(response=response)
+        # telegram message
+        msg = response.get("telegram_msg")
+        lia_telegram.send_simple_msg_chat(message=msg)
 
-            # telegram message
-            msg = response.get("result").get("message")
-            lia_telegram.send_simple_msg_chat(message=msg)
+        return response
 
-            # alexa message
-            lia_alexa.register_flash_briefing_feed(message=msg, title="LIA Bible")
-
-            return response
     except Exception as e:
         error_msg = f"An error occurred: {e}"
-        log.error(error_msg)
+        logger.error(error_msg)
         raise HTTPException(
             status_code=HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
@@ -115,36 +151,54 @@ async def response(request: ExampleRequestBody):
 # Chamada o serviço de mensagem biblica
 @app.post("/bible", dependencies=[Depends(verify_api_key)])
 async def bible():
+    logger.info("Starting bible service ...")
     try:
+        # call the service
         request = None
-        response = await bible_message_service(request=None)
+        response = await bible_message_service(request=request)
 
-        if response is None:
-            log.error(f"Request: {request}")
-            raise HTTPException(
-                status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-                detail={
-                    "error": "Ops... internal error!",
-                    "exception": str("Service response is null"),
-                    "content": str(request),
-                },
-            )
-        else:
+        # save result log
+        save_response_to_s3(response=response)
 
-            # save log
-            save_response_to_s3(response=response)
+        # telegram message
+        msg = response.get("telegram_msg")
+        lia_telegram.send_simple_msg_chat(message=msg)
 
-            # telegram message
-            msg = response.get("result").get("message")
-            lia_telegram.send_simple_msg_chat(message=msg)
-
-            # alexa message
-            lia_alexa.register_flash_briefing_feed(message=msg, title="LIA Bible")
-
-            return response
+        return response
     except Exception as e:
         error_msg = f"An error occurred: {e}"
-        log.error(error_msg)
+        logger.error(error_msg)
+        raise HTTPException(
+            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "error": "Ops... internal error!",
+                "exception": str(e),
+                "content": str(request),
+            },
+        )
+
+
+# Chamada o serviço de construcao de feeds alexa a partir dos logs de D-1 e D0
+@app.post("/alexa", dependencies=[Depends(verify_api_key)])
+async def alexa():
+    logger.info("Starting alexa service ...")
+    try:
+        # call the service
+        request = None
+        response = await alexa_service(request=None)
+
+        # save result log
+        save_response_to_s3(response=response)
+
+        # telegram message
+        msg = response.get("telegram_msg")
+        lia_telegram.send_simple_msg_chat(message=msg)
+
+        return response
+
+    except Exception as e:
+        error_msg = f"An error occurred: {e}"
+        logger.error(error_msg)
         raise HTTPException(
             status_code=HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
