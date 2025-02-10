@@ -5,6 +5,7 @@ Get a random message from bible file
 import logging
 import random
 import datetime, os
+from pytz import timezone
 import uuid
 from dao.file import load_data_from_json
 from dotenv import load_dotenv, find_dotenv
@@ -33,7 +34,7 @@ async def bible_message_service(request):
         bible_data = load_data_from_json("static/biblia.json", encoding="utf-8-sig")
         service_config = load_data_from_json("config/lia_bible.json")
 
-    date_ref_dt = datetime.datetime.now()
+    date_ref_dt = datetime.datetime.now(timezone("America/Sao_Paulo"))
     date_ref = date_ref_dt.strftime("%Y-%m-%d-%H-%M-%S")
 
     # selecionando o livro
