@@ -83,6 +83,9 @@ async def bible_message_service(request):
         "id": id,
         "datetime": date_ref,
         "service": "bible",
+        "alexa_msg": intro_message + message,
+        "email_msg": intro_message + message,
+        "telegram_msg": intro_message + message,
         "result": {"message": intro_message + message},
     }
 
