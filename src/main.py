@@ -8,11 +8,13 @@ import uvicorn
 import logging
 import watchtower
 from log.payload_logging import save_response_to_s3
-from schemas.data_request import ExampleRequestBody
+from schemas.data_request import ResponseRequestBody
 from services.bible_service import bible_message_service
 from services.example_service import service_dummy
 from services.alexa_service import alexa_service
+from services.gemini_service import get_santo_do_dia_service
 from channels.telegram import LiaTelegram
+
 
 from security.security import verify_api_key
 from dotenv import load_dotenv, find_dotenv
@@ -118,34 +120,34 @@ async def hello():
 
 
 # Exemplo de serviço com request
-@app.post("/response", dependencies=[Depends(verify_api_key)])
-async def response(request: ExampleRequestBody):
-    logger.info("Starting response service ...")
-    try:
+# @app.post("/response", dependencies=[Depends(verify_api_key)])
+# async def response(request: ExampleRequestBody):
+#     logger.info("Starting response service ...")
+#     try:
 
-        # call the service
-        response = await service_dummy(request=request)
+#         # call the service
+#         response = await service_dummy(request=request)
 
-        # save result log
-        save_response_to_s3(response=response)
+#         # save result log
+#         save_response_to_s3(response=response)
 
-        # telegram message
-        msg = response.get("telegram_msg")
-        lia_telegram.send_simple_msg_chat(message=msg)
+#         # telegram message
+#         msg = response.get("telegram_msg")
+#         lia_telegram.send_simple_msg_chat(message=msg)
 
-        return response
+#         return response
 
-    except Exception as e:
-        error_msg = f"An error occurred: {e}"
-        logger.error(error_msg)
-        raise HTTPException(
-            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={
-                "error": "Ops... internal error!",
-                "exception": str(e),
-                "content": str(request),
-            },
-        )
+#     except Exception as e:
+#         error_msg = f"An error occurred: {e}"
+#         logger.error(error_msg)
+#         raise HTTPException(
+#             status_code=HTTP_500_INTERNAL_SERVER_ERROR,
+#             detail={
+#                 "error": "Ops... internal error!",
+#                 "exception": str(e),
+#                 "content": str(request),
+#             },
+#         )
 
 
 # Chamada o serviço de mensagem biblica
@@ -165,6 +167,38 @@ async def bible():
         lia_telegram.send_simple_msg_chat(message=msg)
 
         return response
+    except Exception as e:
+        error_msg = f"An error occurred: {e}"
+        logger.error(error_msg)
+        raise HTTPException(
+            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "error": "Ops... internal error!",
+                "exception": str(e),
+                "content": str(request),
+            },
+        )
+
+
+# Exemplo de serviço com request
+@app.post("/response", dependencies=[Depends(verify_api_key)])
+async def response(request: ResponseRequestBody):
+    logger.info("Starting response service ...")
+    try:
+
+        if request.task == "santo_do_dia":
+            # call the service
+            response = await get_santo_do_dia_service(request=request)
+
+            # save result log
+            save_response_to_s3(response=response)
+
+            # telegram message
+            msg = response.get("telegram_msg")
+            lia_telegram.send_simple_msg_chat(message=msg)
+
+            return response
+
     except Exception as e:
         error_msg = f"An error occurred: {e}"
         logger.error(error_msg)

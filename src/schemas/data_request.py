@@ -1,10 +1,9 @@
 from pydantic import BaseModel
 
 
-class ExampleRequestBody(BaseModel):
+class ResponseRequestBody(BaseModel):
 
-    number1: float = 0
-    number2: float = 0
+    task: str = ""
 
 
 class ExampleResponseBody(BaseModel):
