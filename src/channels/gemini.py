@@ -29,6 +29,8 @@ class LiaGemini:
                 "X-Title": "LIA",
             },
             model="google/gemini-2.0-pro-exp-02-05:free",
+            temperature=2.0,
+            top_p=0.9,
             messages=[
                 {
                     "role": "user",

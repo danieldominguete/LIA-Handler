@@ -11,7 +11,7 @@ from log.payload_logging import save_response_to_s3
 from schemas.data_request import ResponseRequestBody
 from services.bible_service import bible_message_service
 from services.alexa_service import alexa_service
-from services.gemini_service import get_santo_do_dia_service
+from services.gemini_service import get_santo_do_dia_service, get_dica_saude_service
 from channels.telegram import LiaTelegram
 
 
@@ -188,6 +188,19 @@ async def response(request: ResponseRequestBody):
         if request.task == "santo_do_dia":
             # call the service
             response = await get_santo_do_dia_service(request=request)
+
+            # save result log
+            save_response_to_s3(response=response)
+
+            # telegram message
+            msg = response.get("telegram_msg")
+            lia_telegram.send_simple_msg_chat(message=msg)
+
+            return response
+
+        if request.task == "dica_saude":
+            # call the service
+            response = await get_dica_saude_service(request=request)
 
             # save result log
             save_response_to_s3(response=response)
