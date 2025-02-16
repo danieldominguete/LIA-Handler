@@ -39,6 +39,12 @@ async def alexa_service(request):
         target_folder,
     )
 
+    download_all_from_s3(
+        "lia-handler",
+        "lia_logs/" + PATH_ENV + "/gemini/" + path_day,
+        target_folder,
+    )
+
     # ----------------------------------------------------------
     # yesterday json logs
     yesterday = datetime.datetime.now(
@@ -51,6 +57,12 @@ async def alexa_service(request):
     download_all_from_s3(
         "lia-handler",
         "lia_logs/" + PATH_ENV + "/bible/" + path_day,
+        target_folder,
+    )
+
+    download_all_from_s3(
+        "lia-handler",
+        "lia_logs/" + PATH_ENV + "/gemini/" + path_day,
         target_folder,
     )
 

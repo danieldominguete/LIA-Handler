@@ -36,4 +36,10 @@ class LiaGemini:
                 }
             ],
         )
-        return completion.choices[0].message.content
+
+        answer = completion.choices[0].message.content
+
+        if answer:
+            return answer
+        else:
+            return ""

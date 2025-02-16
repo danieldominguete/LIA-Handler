@@ -10,7 +10,6 @@ import watchtower
 from log.payload_logging import save_response_to_s3
 from schemas.data_request import ResponseRequestBody
 from services.bible_service import bible_message_service
-from services.example_service import service_dummy
 from services.alexa_service import alexa_service
 from services.gemini_service import get_santo_do_dia_service
 from channels.telegram import LiaTelegram
