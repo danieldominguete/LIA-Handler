@@ -12,6 +12,7 @@ import uuid
 import logging
 import datetime
 from pytz import timezone
+import random
 
 
 def get_date_in_portuguese(now: datetime.datetime):
@@ -85,19 +86,59 @@ async def get_santo_do_dia_service(request):
 
     # datetime service
     now = datetime.datetime.now(timezone("America/Sao_Paulo"))
+    date_ref = now.strftime("%Y-%m-%d-%H-%M-%S")
     now_txt = get_date_in_portuguese(now)
     now = now.strftime("%Y-%m-%d")
 
     question = (
         "Prepare uma resposta no idioma português Brasil. Qual é o santo católico que se celebra no dia de "
         + now_txt
-        + " segundo o calendário liturgico do Brasil? Envie uma resposta em texto sem formatação em idioma português do brasil."
+        + " segundo o calendário liturgico do Brasil? Envie uma resposta em texto sem formatação em idioma português do brasil informando qual é o santo e um resumo sobre a vida deste santo."
     )
     answer = model.get_answer(question)
 
     response = {
         "id": id,
-        "datetime": now,
+        "datetime": date_ref,
+        "service": "gemini",
+        "alexa_msg": answer,
+        "email_msg": "teste mensagem email",
+        "telegram_msg": answer,
+        "result": {"message": answer},
+    }
+
+    return response
+
+
+async def get_dica_saude_service(request):
+
+    # obtain question
+    model = LiaGemini()
+
+    # get hash id
+    id = str(uuid.uuid1().hex)
+
+    # datetime service
+    now = datetime.datetime.now(timezone("America/Sao_Paulo"))
+    date_ref = now.strftime("%Y-%m-%d-%H-%M-%S")
+    now_txt = get_date_in_portuguese(now)
+    now = now.strftime("%Y-%m-%d")
+
+    # Generate a random number between 1 and 365
+    random_topic_number = random.randint(1, 365)
+
+    question = (
+        "Pense em uma lista de 365 tópicos interessantes sobre saúde e alimentação para quem está interessado em emagrecer e escolha o tópico de número "
+        + str(random_topic_number)
+        + " e me apresente um resumo sobre esse tópico em uma resposta sem formatação de texto. Eu não quero saber qual foi a lista que pensou, quero saber somente um resumo sobre o tópico "
+        + str(random_topic_number)
+        + "."
+    )
+    answer = model.get_answer(question)
+
+    response = {
+        "id": id,
+        "datetime": date_ref,
         "service": "gemini",
         "alexa_msg": answer,
         "email_msg": "teste mensagem email",
