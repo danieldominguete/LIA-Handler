@@ -221,3 +221,40 @@ async def get_dica_livro_service(request):
     }
 
     return response
+
+
+async def get_dica_credit_scoring_service(request):
+
+    # obtain question
+    model = LiaGemini()
+
+    # get hash id
+    id = str(uuid.uuid1().hex)
+
+    # datetime service
+    now = datetime.datetime.now(timezone("America/Sao_Paulo"))
+    date_ref = now.strftime("%Y-%m-%d-%H-%M-%S")
+
+    # Generate a random number between 1 and 365
+    random_topic_number = random.randint(1, 365)
+
+    question = (
+        "Pense em uma lista de 365 tópicos avançados sobre técnicas de desenvolvimento de modelos de credit scoring ou collection scoring e escolha o tópico de número "
+        + str(random_topic_number)
+        + " e me apresente um resumo sobre esse tópico em uma resposta sem formatação de texto com no máximo 500 palavras. Eu não quero saber qual foi a lista que pensou, quero saber somente uma explicação sobre o tópico "
+        + str(random_topic_number)
+        + "."
+    )
+    answer = model.get_answer(question)
+
+    response = {
+        "id": id,
+        "datetime": date_ref,
+        "service": "gemini",
+        "alexa_msg": answer,
+        "email_msg": "teste mensagem email",
+        "telegram_msg": answer,
+        "result": {"message": answer},
+    }
+
+    return response
