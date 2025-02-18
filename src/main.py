@@ -16,6 +16,7 @@ from services.gemini_service import (
     get_dica_saude_service,
     get_dica_ai_service,
     get_dica_livro_service,
+    get_dica_credit_scoring_service,
 )
 from channels.telegram import LiaTelegram
 
@@ -232,6 +233,19 @@ async def response(request: ResponseRequestBody):
         if request.task == "dica_livro":
             # call the service
             response = await get_dica_livro_service(request=request)
+
+            # save result log
+            save_response_to_s3(response=response)
+
+            # telegram message
+            msg = response.get("telegram_msg")
+            lia_telegram.send_simple_msg_chat(message=msg)
+
+            return response
+
+        if request.task == "dica_credit_scoring":
+            # call the service
+            response = await get_dica_credit_scoring_service(request=request)
 
             # save result log
             save_response_to_s3(response=response)
