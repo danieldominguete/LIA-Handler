@@ -239,11 +239,9 @@ async def get_dica_credit_scoring_service(request):
     random_topic_number = random.randint(1, 365)
 
     question = (
-        "Pense em uma lista de 365 tópicos avançados sobre técnicas de desenvolvimento de modelos de credit scoring ou collection scoring e escolha o tópico de número "
+        "Seja um especialista em desenvolvimento de modelos de risco de crédito com grande dominio da parte técnica dos conceitos de riscos, crédito e cobrança e pense em uma lista de 365 tópicos avançados sobre esses conceitos. Na sequencia escolha o tópico de número "
         + str(random_topic_number)
-        + " e me apresente um resumo sobre esse tópico em uma resposta sem formatação de texto com no máximo 500 palavras. Eu não quero saber qual foi a lista que pensou, quero saber somente uma explicação sobre o tópico "
-        + str(random_topic_number)
-        + "."
+        + " e me apresente um resumo sobre esse tópico com as principais soluções, estratégias, técnicas e soluções para tratar esse tópico em projetos de desenvolvimento de modelos de credit scoring ou collection scoring. Eu não quero saber qual foi a lista que pensou, quero saber somente o resumo sobre o tópico e principais soluções, estratégias, técnicas e soluções sobre esse topico."
     )
     answer = model.get_answer(question)
 
