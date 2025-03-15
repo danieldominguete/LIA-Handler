@@ -24,7 +24,7 @@ jobs:
                 pip install virtualenv
 
             - name:  Setup Virtual env
-              uses: actions/cache@v2
+              uses: actions/cache@b4a9f2f6e8b4d225c2e7d1b556b8c54f2e5a1e19
               id: cache-venv
               with:
                 path: venv
