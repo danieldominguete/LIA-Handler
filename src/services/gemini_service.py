@@ -93,7 +93,7 @@ async def get_santo_do_dia_service(request):
     question = (
         "Prepare uma resposta no idioma português Brasil. Qual é o santo católico que se celebra no dia de "
         + now_txt
-        + " segundo o calendário liturgico do Brasil? Envie uma resposta em texto sem formatação em idioma português do brasil informando qual é o santo e um resumo sobre a vida deste santo."
+        + " segundo o calendário liturgico do Brasil? Envie uma resposta em texto sem formatação em idioma português do brasil informando qual é o santo e um resumo sobre a vida deste santo.Responda com no máximo 4000 caracteres."
     )
     answer = model.get_answer(question)
 
@@ -132,7 +132,7 @@ async def get_dica_saude_service(request):
         + str(random_topic_number)
         + " e me apresente um resumo sobre esse tópico em uma resposta sem formatação de texto. Eu não quero saber qual foi a lista que pensou, quero saber somente um resumo sobre o tópico "
         + str(random_topic_number)
-        + "."
+        + ". Responda com no máximo 4000 caracteres."
     )
     answer = model.get_answer(question)
 
@@ -169,7 +169,7 @@ async def get_dica_ai_service(request):
         + str(random_topic_number)
         + " e me apresente um resumo sobre esse tópico em uma resposta sem formatação de texto com no máximo 500 palavras. Eu não quero saber qual foi a lista que pensou, quero saber somente uma explicação sobre o tópico "
         + str(random_topic_number)
-        + "."
+        + ". Responda com no máximo 4000 caracteres."
     )
     answer = model.get_answer(question)
 
@@ -206,7 +206,7 @@ async def get_dica_livro_service(request):
         + str(random_topic_number)
         + " e me apresente um resumo com as principais lições que o livro apresenta em uma resposta sem formatação de texto com no máximo 500 palavras. Eu não quero saber qual foi a lista que pensou, quero saber somente os principais insights do livro de número "
         + str(random_topic_number)
-        + " da sua lista."
+        + " da sua lista. Responda com no máximo 4000 caracteres."
     )
     answer = model.get_answer(question)
 
@@ -241,7 +241,7 @@ async def get_dica_credit_scoring_service(request):
     question = (
         "Seja um especialista em desenvolvimento de modelos de risco de crédito com grande dominio da parte técnica dos conceitos de riscos, crédito e cobrança e pense em uma lista de 365 tópicos avançados sobre esses conceitos. Na sequencia escolha o tópico de número "
         + str(random_topic_number)
-        + " e me apresente um resumo sobre esse tópico com as principais soluções, estratégias, técnicas e soluções para tratar esse tópico em projetos de desenvolvimento de modelos de credit scoring ou collection scoring. Eu não quero saber qual foi a lista que pensou, quero saber somente o resumo sobre o tópico e principais soluções, estratégias, técnicas e soluções sobre esse topico."
+        + " e me apresente um resumo sobre esse tópico com as principais soluções, estratégias, técnicas e soluções para tratar esse tópico em projetos de desenvolvimento de modelos de credit scoring ou collection scoring. Eu não quero saber qual foi a lista que pensou, quero saber somente o resumo sobre o tópico e principais soluções, estratégias, técnicas e soluções sobre esse topico. Responda com no máximo 4000 caracteres."
     )
     answer = model.get_answer(question)
 
